@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:km_test/screen/third_screen.dart';
 
 class SecondScreen extends StatelessWidget {
   const SecondScreen({Key? key, required this.name}) : super(key: key);
@@ -8,7 +9,14 @@ class SecondScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var chooseButton = ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ThirdScreen(),
+          ),
+        );
+      },
       child: const Text('Choose a User'),
       style: ElevatedButton.styleFrom(
         primary: const Color(0xFF2B637B),
@@ -43,7 +51,7 @@ class SecondScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 const Text(
                   'Welcome',
                   style: TextStyle(
