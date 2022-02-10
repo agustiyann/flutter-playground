@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:km_test/screen/second_screen.dart';
 
-class FirstScreen extends StatelessWidget {
+class FirstScreen extends StatefulWidget {
   const FirstScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FirstScreen> createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  // Create a text controller and use it to retrieve the current value
+  // of the TextField.
+  final myController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,14 +27,15 @@ class FirstScreen extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const TextField(
+      child: TextField(
         cursorColor: Colors.black,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'Name',
           isDense: true,
           contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         ),
+        controller: myController,
       ),
     );
 
@@ -54,7 +71,9 @@ class FirstScreen extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const SecondScreen()),
+          MaterialPageRoute(
+            builder: (context) => SecondScreen(name: myController.text),
+          ),
         );
       },
       child: const Text('NEXT'),

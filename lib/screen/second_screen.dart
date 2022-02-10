@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SecondScreen extends StatelessWidget {
-  const SecondScreen({Key? key}) : super(key: key);
+  const SecondScreen({Key? key, required this.name}) : super(key: key);
+
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +42,18 @@ class SecondScreen extends StatelessWidget {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 SizedBox(height: 20),
-                Text(
+                const Text(
                   'Welcome',
                   style: TextStyle(
                     fontSize: 12,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Text(
-                  'John Doe',
-                  style: TextStyle(
+                  name,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
