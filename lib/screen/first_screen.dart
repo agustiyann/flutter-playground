@@ -11,12 +11,14 @@ class FirstScreen extends StatefulWidget {
 class _FirstScreenState extends State<FirstScreen> {
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-  final myController = TextEditingController();
+  final nameController = TextEditingController();
+  final palindromeController = TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myController.dispose();
+    nameController.dispose();
+    palindromeController.dispose();
     super.dispose();
   }
 
@@ -35,7 +37,7 @@ class _FirstScreenState extends State<FirstScreen> {
           isDense: true,
           contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         ),
-        controller: myController,
+        controller: nameController,
       ),
     );
 
@@ -44,19 +46,39 @@ class _FirstScreenState extends State<FirstScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const TextField(
+      child: TextField(
         cursorColor: Colors.black,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: 'Palindrome',
           isDense: true,
           contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         ),
+        controller: palindromeController,
       ),
     );
 
+    bool isPalindrome(String text) {
+      String? original = text.replaceAll(' ', '');
+      String? reverse = text.replaceAll(' ', '').split('').reversed.join('');
+      return original == reverse;
+    }
+
     var checkButton = ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              // Retrieve the text the that user has entered by using the
+              // TextEditingController.
+              content: Text(isPalindrome(palindromeController.text)
+                  ? "is Palindrome"
+                  : "not Palindrome"),
+            );
+          },
+        );
+      },
       child: const Text('CHECK'),
       style: ElevatedButton.styleFrom(
         primary: const Color(0xFF2B637B),
@@ -72,7 +94,7 @@ class _FirstScreenState extends State<FirstScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SecondScreen(name: myController.text),
+            builder: (context) => SecondScreen(name: nameController.text),
           ),
         );
       },
