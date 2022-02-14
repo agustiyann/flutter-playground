@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:km_test/model/user_list.dart';
 import 'package:km_test/model/user_model.dart';
 import 'package:km_test/services/api_service.dart';
 
@@ -11,20 +13,37 @@ class ThirdScreen extends StatefulWidget {
 
 class _ThirdScreenState extends State<ThirdScreen> {
   List<User> _users = <User>[];
-  bool isLoading = true;
+  bool _isLoading = false;
+  late ApiService _apiService;
+  late UserList _userList;
+
+  Future getUsers() async {
+    Response response;
+    try {
+      _isLoading = true;
+      response = await _apiService.getRequest('/api/users?page=1&per_page=12');
+      _isLoading = false;
+      print('why bnot showing');
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _userList = UserList.fromJson(response.data);
+          _users = _userList.data!;
+        });
+      } else {
+        print('There is some problem from network!');
+      }
+    } on Exception catch (e) {
+      _isLoading = false;
+      print(e);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    populateUsers();
-  }
-
-  void populateUsers() async {
-    final users = await fetchUsers();
-    setState(() {
-      _users = users;
-      isLoading = false;
-    });
+    _apiService = ApiService();
+    getUsers();
   }
 
   @override
@@ -42,7 +61,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
           color: Colors.black,
         ),
       ),
-      body: isLoading
+      body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -70,7 +89,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: NetworkImage(
-                              _users[index].avatar,
+                              _users[index].avatar!,
                             ),
                           ),
                         ),
@@ -82,16 +101,16 @@ class _ThirdScreenState extends State<ThirdScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            _users[index].firstName +
+                            _users[index].firstName! +
                                 ' ' +
-                                _users[index].lastName,
+                                _users[index].lastName!,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
-                            _users[index].email,
+                            _users[index].email!,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
                               fontSize: 10,
