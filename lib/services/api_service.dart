@@ -1,16 +1,44 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:km_test/model/user_model.dart';
+class ApiService {
+  late Dio _dio;
 
-Future<List<User>> fetchUsers() async {
-  final response = await http.get(Uri.parse('https://reqres.in/api/users'));
+  final baseUrl = 'https://reqres.in';
 
-  if (response.statusCode == 200) {
-    final result = jsonDecode(response.body);
-    Iterable list = result['data'];
-    return list.map((user) => User.fromJson(user)).toList();
-  } else {
-    throw Exception('Failed to load users');
+  ApiService() {
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+    ));
+    initializeInterceptors();
+  }
+
+  Future<Response> getRequest(String endpoint) async {
+    Response response;
+
+    try {
+      response = await _dio.get(endpoint);
+    } on DioError catch (e) {
+      print(e.message);
+      throw Exception(e.message);
+    }
+
+    return response;
+  }
+
+  initializeInterceptors() {
+    _dio.interceptors.add(InterceptorsWrapper(
+      onError: (e, handler) {
+        print(e.message);
+        return handler.next(e);
+      },
+      onRequest: (request, handler) {
+        print("${request.method} ${request.path}");
+        return handler.next(request);
+      },
+      onResponse: (response, handler) {
+        print(response.data);
+        return handler.next(response);
+      },
+    ));
   }
 }
