@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:km_test/screen/third_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatefulWidget {
   const SecondScreen({Key? key, required this.name}) : super(key: key);
 
   final String name;
+
+  @override
+  State<SecondScreen> createState() => _SecondScreenState();
+}
+
+class _SecondScreenState extends State<SecondScreen> {
+  String _selectedUser = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedUser();
+  }
+
+  void _loadSelectedUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedUser = prefs.getString('selected-user') ?? 'Selected User Name';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +36,9 @@ class SecondScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => const ThirdScreen(),
           ),
-        );
+        ).then((value) {
+          _loadSelectedUser();
+        });
       },
       child: const Text('Choose a User'),
       style: ElevatedButton.styleFrom(
@@ -60,7 +83,7 @@ class SecondScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  name,
+                  widget.name,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -68,10 +91,10 @@ class SecondScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const Center(
+            Center(
               child: Text(
-                'Selected User Name',
-                style: TextStyle(
+                _selectedUser,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
