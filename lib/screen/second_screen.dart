@@ -1,43 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:km_test/screen/third_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:km_test/controllers/second_controller.dart';
+import 'package:km_test/routes/route_name.dart';
+import 'package:get/get.dart';
 
-class SecondScreen extends StatefulWidget {
-  const SecondScreen({Key? key, required this.name}) : super(key: key);
-
-  final String name;
-
-  @override
-  State<SecondScreen> createState() => _SecondScreenState();
-}
-
-class _SecondScreenState extends State<SecondScreen> {
-  String _selectedUser = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSelectedUser();
-  }
-
-  void _loadSelectedUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _selectedUser = prefs.getString('selected-user') ?? 'Selected User Name';
-    });
-  }
+class SecondScreen extends StatelessWidget {
+  SecondScreen({Key? key}) : super(key: key);
+  final secondController = Get.put(SecondController());
 
   @override
   Widget build(BuildContext context) {
     var chooseButton = ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ThirdScreen(),
-          ),
-        ).then((value) {
-          _loadSelectedUser();
+        Get.toNamed(RouteName.thirdScreen)!.then((value) {
+          secondController.loadSelectedUser();
         });
       },
       child: const Text('Choose a User'),
@@ -50,64 +25,67 @@ class _SecondScreenState extends State<SecondScreen> {
       ),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
-        title: const Text(
-          'Second Screen',
-          style: TextStyle(
+    return GetBuilder<SecondController>(
+      initState: (_) => secondController.loadSelectedUser(),
+      builder: (_) => Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
             color: Colors.black,
           ),
+          title: const Text(
+            'Second Screen',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          backgroundColor: Colors.white,
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                const Text(
-                  'Welcome',
-                  style: TextStyle(
-                    fontSize: 12,
+        body: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Welcome',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  widget.name,
+                  const SizedBox(height: 6),
+                  Text(
+                    '${Get.arguments}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Center(
+                child: Text(
+                  secondController.selectedUser,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-              ],
-            ),
-            Center(
-              child: Text(
-                _selectedUser,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
               ),
-            ),
-            Column(
-              children: [
-                chooseButton,
-                const SizedBox(height: 32),
-              ],
-            ),
-          ],
+              Column(
+                children: [
+                  chooseButton,
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

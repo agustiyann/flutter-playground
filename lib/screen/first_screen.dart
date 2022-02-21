@@ -1,26 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:km_test/screen/second_screen.dart';
+import 'package:get/get.dart';
+import 'package:km_test/routes/route_name.dart';
 
-class FirstScreen extends StatefulWidget {
-  const FirstScreen({Key? key}) : super(key: key);
-
-  @override
-  State<FirstScreen> createState() => _FirstScreenState();
-}
-
-class _FirstScreenState extends State<FirstScreen> {
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
+class FirstScreen extends StatelessWidget {
+  FirstScreen({Key? key}) : super(key: key);
   final nameController = TextEditingController();
   final palindromeController = TextEditingController();
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    nameController.dispose();
-    palindromeController.dispose();
-    super.dispose();
-  }
+  final firstC = Get.put(FirstController());
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +77,7 @@ class _FirstScreenState extends State<FirstScreen> {
 
     var nextButton = ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SecondScreen(name: nameController.text),
-          ),
-        );
+        Get.toNamed(RouteName.secondScreen, arguments: nameController.text);
       },
       child: const Text('NEXT'),
       style: ElevatedButton.styleFrom(
@@ -108,38 +89,47 @@ class _FirstScreenState extends State<FirstScreen> {
       ),
     );
 
-    return Scaffold(
-      body: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          constraints: const BoxConstraints.expand(),
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/background.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/btn_add_photo.png',
-                width: 116,
-                height: 116,
+    return GetBuilder<FirstController>(
+      dispose: (_) {
+        nameController.dispose();
+        palindromeController.dispose();
+        print('dispose');
+      },
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            constraints: const BoxConstraints.expand(),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/background.png'),
+                fit: BoxFit.cover,
               ),
-              const SizedBox(height: 58),
-              nameTextField,
-              const SizedBox(height: 22),
-              palindromeTextField,
-              const SizedBox(height: 45),
-              checkButton,
-              const SizedBox(height: 15),
-              nextButton,
-            ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/btn_add_photo.png',
+                  width: 116,
+                  height: 116,
+                ),
+                const SizedBox(height: 58),
+                nameTextField,
+                const SizedBox(height: 22),
+                palindromeTextField,
+                const SizedBox(height: 45),
+                checkButton,
+                const SizedBox(height: 15),
+                nextButton,
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+class FirstController extends GetxController {}
